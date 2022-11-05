@@ -9,9 +9,9 @@ AS
 													 AND codigo_disciplina = @disciplina
 													 AND codigo_avaliacao = @avaliacao)
 	
-	--A procedure vai verificar se esse aluno já teve nota na avaliacao dessa disciplina
+	--A procedure vai verificar se esse aluno jÃ¡ teve nota na avaliacao dessa disciplina
 	--Se sim, o prof pode fazer um UPDATE e atualizar a nota
-	--Se não, ele faz um INSERT
+	--Se nÃ£o, ele faz um INSERT
 	IF(@verificaAluno = 1)
 	BEGIN
 		UPDATE notas
@@ -32,19 +32,19 @@ AS
 	DECLARE @verificaDisciplina INT, 
 			@verificaAluno INT
 
-	--Verifica se a quantidade de @presenca é valida para a @disciplina
+	--Verifica se a quantidade de @presenca Ã© valida para a @disciplina
 	SET @verificaDisciplina = (SELECT num_aulas FROM disciplina WHERE codigo = @disciplina) / 20
-	--Verifica se o aluno já teve faltas nesse dia (UPDATE) ou não (INSERT)
+	--Verifica se o aluno jÃ¡ teve faltas nesse dia (UPDATE) ou nÃ£o (INSERT)
 	SET @verificaAluno = (SELECT COUNT(*) FROM faltas WHERE ra_aluno = @ra
 												      AND codigo_disciplina = @disciplina
 													  AND datas = @datas)
 	IF(@presenca > @verificaDisciplina)
 	BEGIN
-		RAISERROR ('Você ultrapassou o limite de faltas/presenças permitidas por dia',16,1)
+		RAISERROR ('VocÃª ultrapassou o limite de faltas/presenÃ§as permitidas por dia',16,1)
 	END
 	ELSE
 	BEGIN
-		PRINT 'Faltas/presenças permitidas'
+		PRINT 'Faltas/presenÃ§as permitidas'
 		IF(@verificaAluno = 1)
 		BEGIN
 			PRINT 'UPDATE'
@@ -63,8 +63,8 @@ AS
 	END
 
 ---------------------------------------------------- FUNCTION NOTAS  ----------------------------------------------
---APRESENTAR EM TELA, A SAIDA DE UMA UDF, COM CURSOR, QUE APRESENTA UM QUADRO COM AS NOTAS DA TURMA:
---(RA_Aluno, nome_aluno, nota1, nota2, Media final, situação)
+/*APRESENTAR EM TELA, A SAIDA DE UMA UDF, COM CURSOR, QUE APRESENTA UM QUADRO COM AS NOTAS DA TURMA:
+(RA_Aluno, nome_aluno, nota1, nota2, Media final, situaÃ§Ã£o)
 CREATE FUNCTION fn_notas()
 RETURNS @tabela TABLE(
 ra_aluno INT,
@@ -72,7 +72,7 @@ nome_aluno VARCHAR(100),
 nota1
 nota2
 nota3
-
+*/
 
 
 --teste insere falta
