@@ -324,7 +324,268 @@ BEGIN
 	RETURN(@calcNota)
 END
 
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------- FUNCTION FALTAS
+---------------------------------------------------------- FUNCTION QUE CONVERTE FALTA EM LETRA
+CREATE FUNCTION fn_conversorFalta(@presenca INT, @tipo INT)
+RETURNS VARCHAR(4)
+AS
+BEGIN
+	DECLARE @faltas VARCHAR(4)
+	IF(@presenca = 0)
+	BEGIN
+		IF (@tipo = 80)
+		BEGIN
+			SET @faltas = 'PPPP'
+		END
+		ELSE
+		BEGIN
+			SET @faltas = 'PP'
+		END
+	END
+	IF(@presenca = 1)
+	BEGIN
+		IF (@tipo = 80)
+		BEGIN
+			SET @faltas = 'PPPF'
+		END
+		ELSE
+		BEGIN
+			SET @faltas = 'PF'
+		END
+	END
+	IF(@presenca = 2)
+	BEGIN
+		IF (@tipo = 80)
+		BEGIN
+			SET @faltas = 'PPFF'
+		END
+		ELSE
+		BEGIN
+			SET @faltas = 'FF'
+		END
+	END
+	IF(@presenca = 3)
+	BEGIN
+		SET @faltas = 'PFFF'
+	END
+	IF(@presenca = 4)
+	BEGIN
+		SET @faltas = 'FFFF'
+	END
+	RETURN(@faltas)
+END
+------------------------------------------------------------------------ FUNCTION DE FALTAS
 
+ALTER FUNCTION fn_faltas(@codDisciplina VARCHAR(10))
+RETURNS @tabela TABLE(
+ra_aluno INT,
+nome_aluno VARCHAR(20),
+semana1 VARCHAR(4),
+semana2 VARCHAR(4),
+semana3 VARCHAR(4),
+semana4 VARCHAR(4),
+semana5 VARCHAR(4),
+semana6 VARCHAR(4),
+semana7 VARCHAR(4),
+semana8 VARCHAR(4),
+semana9 VARCHAR(4),
+semana10 VARCHAR(4),
+semana11 VARCHAR(4),
+semana12 VARCHAR(4),
+semana13 VARCHAR(4),
+semana14 VARCHAR(4),
+semana15 VARCHAR(4),
+semana16 VARCHAR(4),
+semana17 VARCHAR(4),
+semana18 VARCHAR(4),
+semana19 VARCHAR(4),
+semana20 VARCHAR(4),
+total_faltas INT
+)
+AS
+BEGIN
+	DECLARE @nome VARCHAR(20),
+			@ra INT,
+			@datas DATE,
+			@presenca INT,
+			@tipo INT,
+			@cont INT
+
+	SET @tipo = (SELECT num_aulas FROM disciplina WHERE codigo = @codDisciplina)
+	SET @cont = 0
+	DECLARE c CURSOR FOR
+		SELECT DISTINCT ra_aluno FROM faltas WHERE codigo_disciplina = @codDisciplina
+	OPEN c
+	FETCH NEXT FROM c INTO @ra
+	WHILE @@FETCH_STATUS = 0
+	BEGIN
+		SET @nome = (SELECT nome FROM aluno WHERE ra = @ra)
+		INSERT INTO @tabela VALUES (@ra, @nome, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+    ------------------------------------------------------------------------------------
+		DECLARE c1 CURSOR FOR
+			SELECT datas, presenca FROM faltas WHERE codigo_disciplina = @codDisciplina AND ra_aluno = @ra ORDER BY datas
+		OPEN c1
+		FETCH NEXT FROM c1 INTO @datas, @presenca
+		WHILE @@FETCH_STATUS = 0
+		BEGIN
+			SET @cont = @cont + 1
+
+			IF (@cont = 1)
+			BEGIN
+				UPDATE @tabela
+				SET semana1 = dbo.fn_conversorFalta(@presenca, @tipo), total_faltas = @presenca + total_faltas
+				WHERE ra_aluno = @ra
+			END
+			ELSE
+			IF (@cont = 2)
+			BEGIN
+				UPDATE @tabela
+				SET semana2 = dbo.fn_conversorFalta(@presenca, @tipo), total_faltas = @presenca + total_faltas
+				WHERE ra_aluno = @ra
+			END
+			ELSE
+			IF (@cont = 3)
+			BEGIN
+				UPDATE @tabela
+				SET semana3 = dbo.fn_conversorFalta(@presenca, @tipo), total_faltas = @presenca + total_faltas
+				WHERE ra_aluno = @ra
+			END
+			ELSE
+			IF (@cont = 4)
+			BEGIN
+				UPDATE @tabela
+				SET semana4 = dbo.fn_conversorFalta(@presenca, @tipo), total_faltas = @presenca + total_faltas
+				WHERE ra_aluno = @ra
+			END
+			ELSE
+			IF (@cont = 5)
+			BEGIN
+				UPDATE @tabela
+				SET semana5 = dbo.fn_conversorFalta(@presenca, @tipo), total_faltas = @presenca + total_faltas
+				WHERE ra_aluno = @ra
+			END
+			ELSE
+			IF (@cont = 6)
+			BEGIN
+				UPDATE @tabela
+				SET semana6 = dbo.fn_conversorFalta(@presenca, @tipo), total_faltas = @presenca + total_faltas
+				WHERE ra_aluno = @ra
+			END
+			ELSE
+			IF (@cont = 7)
+			BEGIN
+				UPDATE @tabela
+				SET semana7 = dbo.fn_conversorFalta(@presenca, @tipo), total_faltas = @presenca + total_faltas
+				WHERE ra_aluno = @ra
+			END
+			ELSE
+			IF (@cont = 8)
+			BEGIN
+				UPDATE @tabela
+				SET semana8 = dbo.fn_conversorFalta(@presenca, @tipo), total_faltas = @presenca + total_faltas
+				WHERE ra_aluno = @ra
+			END
+			ELSE
+			IF (@cont = 9)
+			BEGIN
+				UPDATE @tabela
+				SET semana9 = dbo.fn_conversorFalta(@presenca, @tipo), total_faltas = @presenca + total_faltas
+				WHERE ra_aluno = @ra
+			END
+			ELSE
+			IF (@cont = 10)
+			BEGIN
+				UPDATE @tabela
+				SET semana10 = dbo.fn_conversorFalta(@presenca, @tipo), total_faltas = @presenca + total_faltas
+				WHERE ra_aluno = @ra
+			END
+			ELSE
+			IF (@cont = 11)
+			BEGIN
+				UPDATE @tabela
+				SET semana11 = dbo.fn_conversorFalta(@presenca, @tipo), total_faltas = @presenca + total_faltas
+				WHERE ra_aluno = @ra
+			END
+			ELSE
+			IF (@cont = 12)
+			BEGIN
+				UPDATE @tabela
+				SET semana12 = dbo.fn_conversorFalta(@presenca, @tipo), total_faltas = @presenca + total_faltas
+				WHERE ra_aluno = @ra
+			END
+			ELSE
+			IF (@cont = 13)
+			BEGIN
+				UPDATE @tabela
+				SET semana13 = dbo.fn_conversorFalta(@presenca, @tipo), total_faltas = @presenca + total_faltas
+				WHERE ra_aluno = @ra
+			END
+			ELSE
+			IF (@cont = 14)
+			BEGIN
+				UPDATE @tabela
+				SET semana14 = dbo.fn_conversorFalta(@presenca, @tipo), total_faltas = @presenca + total_faltas
+				WHERE ra_aluno = @ra
+			END
+			ELSE
+			IF (@cont = 15)
+			BEGIN
+				UPDATE @tabela
+				SET semana15 = dbo.fn_conversorFalta(@presenca, @tipo), total_faltas = @presenca + total_faltas
+				WHERE ra_aluno = @ra
+			END
+			ELSE
+			IF (@cont = 16)
+			BEGIN
+				UPDATE @tabela
+				SET semana16 = dbo.fn_conversorFalta(@presenca, @tipo), total_faltas = @presenca + total_faltas
+				WHERE ra_aluno = @ra
+			END
+			ELSE
+			IF (@cont = 17)
+			BEGIN
+				UPDATE @tabela
+				SET semana17 = dbo.fn_conversorFalta(@presenca, @tipo), total_faltas = @presenca + total_faltas
+				WHERE ra_aluno = @ra
+			END
+			ELSE
+			IF (@cont = 18)
+			BEGIN
+				UPDATE @tabela
+				SET semana18 = dbo.fn_conversorFalta(@presenca, @tipo), total_faltas = @presenca + total_faltas
+				WHERE ra_aluno = @ra
+			END
+			ELSE
+			IF (@cont = 19)
+			BEGIN
+				UPDATE @tabela
+				SET semana19 = dbo.fn_conversorFalta(@presenca, @tipo), total_faltas = @presenca + total_faltas
+				WHERE ra_aluno = @ra
+			END
+			ELSE
+			IF (@cont = 20)
+			BEGIN
+				UPDATE @tabela
+				SET semana20 = dbo.fn_conversorFalta(@presenca, @tipo), total_faltas = @presenca + total_faltas
+				WHERE ra_aluno = @ra
+			END
+
+		FETCH NEXT FROM c1 INTO @datas, @presenca
+		END
+		CLOSE c1
+		DEALLOCATE c1
+		SET @cont = 0
+	------------------------------------------------------------------------------------
+	FETCH NEXT FROM c INTO @ra
+	END
+	CLOSE c
+	DEALLOCATE c
+	RETURN
+END
+
+
+/*
 --teste insere falta
 exec pc_insereFalta @ra = 11101, @disciplina = '4203-010', @datas = '02/11/2022', @presenca = 2
 exec pc_insereFalta @ra = 11101, @disciplina = '4203-010', @datas = '03/11/2022', @presenca = 4
@@ -342,5 +603,5 @@ exec pc_insereNota @ra = 11101, @disciplina = '4203-010', @avaliacao = 1, @nota 
 
 select * from notas
 delete notas
-
+*/
 
