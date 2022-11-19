@@ -8,10 +8,10 @@ public class Disciplina {
 	private String turno;
 	private int numAulas;
 	
-	public int getCodigo() {
+	public String getCodigo() {
 		return codigo;
 	}
-	public void setCodigo(int codigo) {
+	public void setCodigo(String codigo) {
 		this.codigo = codigo;
 	}
 	public String getNome() {
