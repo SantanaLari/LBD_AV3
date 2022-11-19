@@ -17,7 +17,7 @@ public class NotasDao implements INotasDao {
 	@Override
 	public String inserirNotas(Notas n) throws SQLException, ClassNotFoundException {
 		Connection c = gDao.getConnection();
-		String sql = "EXEC pc_insereNota (?,?,?,?) ";
+		String sql = "EXEC pc_insereNota @ra = ?, @disciplina = ?, @avaliacao = ?, @nota = ? ";
 		PreparedStatement ps = c.prepareStatement(sql);
 		ps.setInt(1, n.getAluno().getRa());
 		ps.setString(2, n.getDisciplina().getSigla());
@@ -39,7 +39,7 @@ public class NotasDao implements INotasDao {
 		ps.close();
 		c.close();
 		
-		return "Médias calculadas com sucesso.";
+		return "MÃ©dias calculadas com sucesso.";
 	}
 
 }
