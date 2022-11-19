@@ -2,14 +2,14 @@ package model;
 
 public class Avaliacao {
 
-	private int ra;
+	private int codigo;
 	private String tipo;
 	
-	public int getRa() {
-		return ra;
+	public int getCodigo() {
+		return codigo;
 	}
-	public void setRa(int ra) {
-		this.ra = ra;
+	public void setCodigo(int codigo) {
+		this.codigo = codigo;
 	}
 	public String getTipo() {
 		return tipo;
@@ -19,7 +19,7 @@ public class Avaliacao {
 	}
 	@Override
 	public String toString() {
-		return "Avaliacao [ra=" + ra + ", tipo=" + tipo + "]";
+		return "Avaliacao [codigo=" + codigo + ", tipo=" + tipo + "]";
 	}
 	
 }
