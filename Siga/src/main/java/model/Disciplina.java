@@ -2,7 +2,7 @@ package model;
 
 public class Disciplina {
 
-	private int codigo;
+	private String codigo;
 	private String nome;
 	private String sigla;
 	private String turno;
