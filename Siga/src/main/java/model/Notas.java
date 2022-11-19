@@ -5,7 +5,7 @@ public class Notas {
 	private Aluno aluno;
 	private Disciplina disciplina;
 	private Avaliacao avaliacao;
-	private double nota;
+	private Double nota;
 	
 	public Aluno getAluno() {
 		return aluno;
@@ -25,10 +25,10 @@ public class Notas {
 	public void setAvaliacao(Avaliacao avaliacao) {
 		this.avaliacao = avaliacao;
 	}
-	public double getNota() {
+	public Double getNota() {
 		return nota;
 	}
-	public void setNota(double nota) {
+	public void setNota(Double nota) {
 		this.nota = nota;
 	}
 	@Override
