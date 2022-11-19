@@ -44,12 +44,13 @@ public class NotasServlet extends HttpServlet {
 			if(botao.equals("Inserir")) {
 				n = valido(ra,disciplina, avaliacao, nota, botao);
 				saida = nDao.inserirNotas(n);
+				n = new Notas();
 			}
 		}catch(SQLException | ClassNotFoundException e) {
 			erro = e.getMessage();
 		}finally {
 			RequestDispatcher rd = request.getRequestDispatcher("notas.jsp");
-			request.setAttribute("n", n);
+			request.setAttribute("nota", n);
 			request.setAttribute("erro", erro);
 			request.setAttribute("saida", saida);
 			rd.forward(request, response);
@@ -63,7 +64,7 @@ public class NotasServlet extends HttpServlet {
 		Disciplina d = new Disciplina();
 
 		if(botao.equals("Inserir")) {
-			if(ra.equals("") || disciplina.equals("") || avaliacao.equals("") || nota.equals("")) {
+			if(ra.equals("") || disciplina.equals("") || avaliacao.equals("") || nota.equals("0")) {
 				throw new IOException("Preencher todos os campos.");
 			} else {
 				al.setRa(Integer.parseInt(ra));
