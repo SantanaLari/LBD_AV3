@@ -63,6 +63,83 @@ AS
 	END
 
 ---------------------------------------------------- FUNCTION NOTAS [Completo POREM SEM MUITO TESTE] ----------------------------------------------
+---------------------------------------------------- FUNCTION QUE VERIFICA A SITUAÇÃO
+CREATE FUNCTION verificaSituacao(@ra INT, @codDisciplina VARCHAR(10), @P3 INT, @media DECIMAL(7,2))
+RETURNS VARCHAR(50)
+AS
+BEGIN
+	DECLARE @faltas INT,
+			@situacao VARCHAR(50),
+			@limite INT,
+			@aulas INT
+
+	--verifica o limite de faltas permitadas
+	SET @limite = (SELECT num_aulas FROM disciplina WHERE codigo = @codDisciplina) * 0.25
+    --verifica as faltas do aluno
+	SET @faltas = (SELECT SUM(presenca) FROM faltas WHERE codigo_disciplina = @codDisciplina AND ra_aluno = @ra)
+	--verifica quantas aulas ocorreram ate o momento
+	IF(@limite = 20)
+	BEGIN
+		SET @aulas = (SELECT COUNT(*) FROM faltas) * 4
+	END
+	ELSE 
+	IF(@limite = 10)
+	BEGIN
+		SET @aulas = (SELECT COUNT(*) FROM faltas) * 2
+	END
+
+	IF(@media > 6)
+	BEGIN
+		IF(@faltas > @limite) --reprovado por falta
+		BEGIN
+			SET @situacao = 'Reprovado por falta'
+		END
+			ELSE
+			IF(@aulas <= @limite) OR (@faltas IS NULL)
+			BEGIN
+				SET @situacao = 'Analise'
+			END
+				ELSE
+				IF(@faltas < @limite) AND (@aulas > @limite)
+				BEGIN
+					SET @situacao = 'Aprovado'
+				END		
+	END
+	ELSE
+	IF(@media < 6) --quase reprovado
+	BEGIN
+		IF(@media < 3) OR (@P3 = 1) --reprovado por nota 
+		BEGIN
+			IF(@faltas > @limite) --reprovado por falta
+			BEGIN
+				SET @situacao = 'Reprovado por nota e falta'
+			END
+			ELSE 
+			IF(@faltas < @limite) AND (@aulas > @limite) --aprovado por presença
+			BEGIN
+				SET @situacao = 'Reprovado por nota'
+			END
+			IF(@faltas < @limite) AND (@aulas > @limite) OR (@faltas IS NULL)
+			BEGIN
+				SET @situacao = 'Reprovado por nota'
+			END
+		END
+		IF(@media > 3) AND (@P3 = 0) 
+		BEGIN
+			IF(@faltas > @limite) --reprovado por falta
+			BEGIN
+				SET @situacao = 'Reprovado por falta'
+			END
+			IF(@faltas < @limite) AND (@aulas > @limite) OR (@faltas IS NULL)
+			BEGIN
+				SET @situacao = 'Exame'
+			END		
+		END
+	END
+	RETURN (@situacao)
+END
+
+---------------------------------------------------- FUNCTION QUE CALCULA AS NOTAS
 CREATE FUNCTION fn_notas2(@codDisciplina VARCHAR(10))
 RETURNS @tabela TABLE(
 ra_aluno INT,
@@ -73,7 +150,7 @@ nota3 DECIMAL(7,2), --Trabalho / P3(LBD)
 nota4 DECIMAL(7,2), --PRE P3 (SOI)
 exame DECIMAL(7,2), --EXAME
 media_final DECIMAL(7,2),
-situacao VARCHAR(20)
+situacao VARCHAR(50)
 )
 AS 
 BEGIN
@@ -85,7 +162,7 @@ BEGIN
 			@situacao VARCHAR(20),
 			@P3 INT,
 			@tipo INT,
-			@faltas VARCHAR(15)
+			@faltas VARCHAR(50)
 	SET @media = 0
 	SET @P3 = 0
 
@@ -99,8 +176,6 @@ BEGIN
 		SET @nome = (SELECT nome from aluno WHERE ra = @ra)
 		INSERT INTO @tabela VALUES(@ra, @nome, 0, 0, 0, 0, NULL, 0, NULL)
 		
-    ---------------------------------- VERIFICA SE NÃO REPROVOU POR FALTA
-		SET @faltas = (SELECT dbo.verificaFalta(@ra, @codDisciplina))
 	--------------------------------------------------------------------------------------
 		DECLARE c1 CURSOR FOR
 			SELECT codigo_avaliacao, nota FROM notas WHERE codigo_disciplina = @codDisciplina AND ra_aluno = @ra
@@ -194,58 +269,13 @@ BEGIN
 		SET @P3 = (SELECT COUNT(exame) FROM @tabela WHERE ra_aluno = @ra)
 
 		SET @media = (SELECT media_final FROM @tabela WHERE ra_aluno = @ra)
+ 
+		SET @faltas = (SELECT dbo.verificaSituacao(@ra, @codDisciplina, @P3, @media))
 
-		IF(@media >= 6)
-		BEGIN
-			IF(@faltas = 'Reprovado')
-			BEGIN
-				UPDATE @tabela
-				SET situacao = 'Reprovado por falta'
-				WHERE ra_aluno = @ra
-			END
-			ELSE
-			BEGIN
-				UPDATE @tabela
-				SET situacao = 'Aprovado'
-				WHERE ra_aluno = @ra
-			END
-		END
-		ELSE
-		IF (@media < 6)
-		BEGIN
-			IF(@faltas = 'Aprovado')
-			BEGIN
-				IF((@media > 3) AND (@P3 = 0))
-				BEGIN
-					UPDATE @tabela
-					SET situacao = 'Exame'
-					WHERE ra_aluno = @ra
-				END
-				ELSE
-				IF((@media < 3) OR (@P3 = 1))
-				BEGIN
-					UPDATE @tabela
-					SET situacao = 'Reprovado por nota'
-					WHERE ra_aluno = @ra
-				END
-			END
-			IF(@faltas = 'Reprovado')
-			BEGIN
-				IF((@media > 3) AND (@P3 = 0))
-				BEGIN
-					UPDATE @tabela
-					SET situacao = 'Reprovado por falta'
-					WHERE ra_aluno = @ra
-				END
-				ELSE
-				IF((@media < 3) OR (@P3 = 1))
-				BEGIN
-					UPDATE @tabela
-					SET situacao = 'Reprovado por nota e falta'
-					WHERE ra_aluno = @ra
-				END
-			END
-		END
+		UPDATE @tabela
+		SET situacao = @faltas
+		WHERE ra_aluno = @ra
+
 	FETCH NEXT FROM c INTO @ra
 	END
 	CLOSE c
