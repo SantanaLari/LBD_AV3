@@ -139,7 +139,79 @@ BEGIN
 	RETURN (@situacao)
 END
 
----------------------------------------------------- FUNCTION QUE CALCULA AS NOTAS
+---------------------------------------------- FUNCTION QUE CALCULA NOTA
+ALTER FUNCTION calculaNota(@avaliacao INT, @nota DECIMAL(7,2), @tipo INT)
+RETURNS DECIMAL(7,2)
+AS
+BEGIN
+	DECLARE @calcNota DECIMAL(7,2)
+	
+------------------------------------- P1
+	IF(@avaliacao = 1)
+	BEGIN
+		IF(@tipo = 1)
+		BEGIN
+			SET @calcNota = @nota * 0.3
+		END
+		ELSE 
+		IF (@tipo = 2)
+		BEGIN 
+			SET @calcNota = @nota * 0.35
+		END
+		ELSE
+		IF (@tipo = 3)
+		BEGIN
+			SET @calcNota = @nota * 0.333
+		END
+		ELSE
+		IF(@tipo = 4)
+		BEGIN
+			SET @calcNota = @nota * 0.8
+		END
+	END
+
+------------------------------------- P2
+	IF(@avaliacao = 2)
+	BEGIN
+		IF(@tipo = 1)
+		BEGIN
+			SET @calcNota = @nota * 0.5
+		END
+		ELSE 
+		IF (@tipo = 2)
+		BEGIN 
+			SET @calcNota = @nota * 0.35
+		END
+		ELSE
+		IF (@tipo = 3)
+		BEGIN
+			SET @calcNota = @nota * 0.333
+		END
+		ELSE
+		IF(@tipo = 4)
+		BEGIN
+			SET @calcNota = @nota * 0.2
+		END
+	END
+
+------------------------------------- TRABALHO
+	IF(@avaliacao = 6)
+	BEGIN
+		IF(@tipo = 1)
+		BEGIN
+			SET @calcNota = @nota * 0.2
+		END
+		ELSE 
+		IF (@tipo = 2)
+		BEGIN 
+			SET @calcNota = @nota * 0.3
+		END
+	END
+	RETURN(@calcNota)
+END
+
+
+---------------------------------------------------- FUNCTION QUE CRIA A TABELA QUE GERA AS NOTAS
 CREATE FUNCTION fn_notas2(@codDisciplina VARCHAR(10))
 RETURNS @tabela TABLE(
 ra_aluno INT,
@@ -283,76 +355,6 @@ BEGIN
 	RETURN
 END
 
----------------------------------------------- FUNCTION QUE CALCULA NOTA
-ALTER FUNCTION calculaNota(@avaliacao INT, @nota DECIMAL(7,2), @tipo INT)
-RETURNS DECIMAL(7,2)
-AS
-BEGIN
-	DECLARE @calcNota DECIMAL(7,2)
-	
-------------------------------------- P1
-	IF(@avaliacao = 1)
-	BEGIN
-		IF(@tipo = 1)
-		BEGIN
-			SET @calcNota = @nota * 0.3
-		END
-		ELSE 
-		IF (@tipo = 2)
-		BEGIN 
-			SET @calcNota = @nota * 0.35
-		END
-		ELSE
-		IF (@tipo = 3)
-		BEGIN
-			SET @calcNota = @nota * 0.333
-		END
-		ELSE
-		IF(@tipo = 4)
-		BEGIN
-			SET @calcNota = @nota * 0.8
-		END
-	END
-
-------------------------------------- P2
-	IF(@avaliacao = 2)
-	BEGIN
-		IF(@tipo = 1)
-		BEGIN
-			SET @calcNota = @nota * 0.5
-		END
-		ELSE 
-		IF (@tipo = 2)
-		BEGIN 
-			SET @calcNota = @nota * 0.35
-		END
-		ELSE
-		IF (@tipo = 3)
-		BEGIN
-			SET @calcNota = @nota * 0.333
-		END
-		ELSE
-		IF(@tipo = 4)
-		BEGIN
-			SET @calcNota = @nota * 0.2
-		END
-	END
-
-------------------------------------- TRABALHO
-	IF(@avaliacao = 6)
-	BEGIN
-		IF(@tipo = 1)
-		BEGIN
-			SET @calcNota = @nota * 0.2
-		END
-		ELSE 
-		IF (@tipo = 2)
-		BEGIN 
-			SET @calcNota = @nota * 0.3
-		END
-	END
-	RETURN(@calcNota)
-END
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------
 ---------------------------------------------------------- FUNCTION FALTAS
