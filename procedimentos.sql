@@ -222,7 +222,8 @@ nota3 DECIMAL(7,2), --Trabalho / P3(LBD)
 nota4 DECIMAL(7,2), --PRE P3 (SOI)
 exame DECIMAL(7,2), --EXAME
 media_final DECIMAL(7,2),
-situacao VARCHAR(50)
+situacao VARCHAR(50),
+nome_disciplina VARCHAR(100) --jasper
 )
 AS 
 BEGIN
@@ -234,7 +235,8 @@ BEGIN
 			@situacao VARCHAR(20),
 			@P3 INT,
 			@tipo INT,
-			@faltas VARCHAR(50)
+			@faltas VARCHAR(50),
+			@nome_disciplina VARCHAR(100)
 	SET @media = 0
 	SET @P3 = 0
 
@@ -246,7 +248,8 @@ BEGIN
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
 		SET @nome = (SELECT nome from aluno WHERE ra = @ra)
-		INSERT INTO @tabela VALUES(@ra, @nome, 0, 0, 0, 0, NULL, 0, NULL)
+		SET @nome_disciplina = (SELECT nome FROM disciplina WHERE codigo = @codDisciplina)
+		INSERT INTO @tabela VALUES(@ra, @nome, 0, 0, 0, 0, NULL, 0, NULL, @nome_disciplina)
 		
 	--------------------------------------------------------------------------------------
 		DECLARE c1 CURSOR FOR
@@ -433,7 +436,8 @@ semana17 VARCHAR(4),
 semana18 VARCHAR(4),
 semana19 VARCHAR(4),
 semana20 VARCHAR(4),
-total_faltas INT
+total_faltas INT,
+nome_disciplina VARCHAR(100)
 )
 AS
 BEGIN
@@ -442,7 +446,8 @@ BEGIN
 			@datas DATE,
 			@presenca INT,
 			@tipo INT,
-			@cont INT
+			@cont INT,
+			@nomeDisciplina VARCHAR(100)
 
 	SET @tipo = (SELECT num_aulas FROM disciplina WHERE codigo = @codDisciplina)
 	SET @cont = 0
@@ -453,7 +458,8 @@ BEGIN
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
 		SET @nome = (SELECT nome FROM aluno WHERE ra = @ra)
-		INSERT INTO @tabela VALUES (@ra, @nome, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+		SET @nomeDisciplina = (SELECT nome FROM disciplina WHERE codigo = @codDisciplina)
+		INSERT INTO @tabela VALUES (@ra, @nome, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, @nomeDisciplina)
     ------------------------------------------------------------------------------------
 		DECLARE c1 CURSOR FOR
 			SELECT datas, presenca FROM faltas WHERE codigo_disciplina = @codDisciplina AND ra_aluno = @ra ORDER BY datas
