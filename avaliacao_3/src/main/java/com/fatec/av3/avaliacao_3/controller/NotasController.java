@@ -11,11 +11,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.fatec.av3.avaliacao_3.model.Aluno;
-import com.fatec.av3.avaliacao_3.model.Avaliacao;
-import com.fatec.av3.avaliacao_3.model.Disciplina;
-import com.fatec.av3.avaliacao_3.model.Nota;
-import com.fatec.av3.avaliacao_3.persistence.NotasDao;
+import br.edu.fateczl.sistemaAcademico.model.Aluno;
+import br.edu.fateczl.sistemaAcademico.model.Avaliacao;
+import br.edu.fateczl.sistemaAcademico.model.Disciplina;
+import br.edu.fateczl.sistemaAcademico.model.Nota;
+import br.edu.fateczl.sistemaAcademico.persistence.NotasDao;
 
 @Controller
 public class NotasController {
@@ -30,10 +30,6 @@ public class NotasController {
 	
 	@RequestMapping(name = "notas", value="/notas", method = RequestMethod.POST)
 	public ModelAndView findAlunos(@RequestParam Map<String, String> params, ModelMap model) {
-		String ra = params.get("ra");
-		String disciplina = params.get("disciplina");
-		String avaliacao = params.get("avaliacao");
-		String nota = params.get("nota");
 		String botao = params.get("botao");
 		String erro = "";
 		String saida = "";
@@ -51,7 +47,7 @@ public class NotasController {
 		}finally {
 			model.addAttribute("saida", saida);
 			model.addAttribute("erro", erro);
-			model.addAttribute("nota", nota);
+			model.addAttribute("nota", n);
 		}
 		return new ModelAndView("notas");
 	}
